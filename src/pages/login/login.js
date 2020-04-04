@@ -19,7 +19,7 @@ export default class Login extends Component{
             email: '',
             password: '',
             rememberMe: false,
-            token: '8e0b0ad2b978af1c7f9489828a280e3c765e0388',
+            token: '',
             // token:'',
             msg: ''
         }
