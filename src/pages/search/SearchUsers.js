@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, StyleSheet ,ScrollView, ActivityIndicator,
-FlatList } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { getFollers } from '../../api/user'
-import gStyles from '../../commonStyle'
+import { Text, View, Image, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native'
+import { getFollowing } from '../../api/user'
+import { searchRepos, searchUsers } from '../../api/search'
 
-export default class Followers extends Component{
+export default class SearchUsers extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -16,28 +14,34 @@ export default class Followers extends Component{
         this.loadMore = this.loadMore.bind(this)
         this.renderFooter = this.renderFooter.bind(this)
     }
+
     componentDidMount(){
-        this.loadMore()
+        const { search } = this.props.route.params
+        console.log('fkkk',search)
+        if(search){
+            this.loadMore()
+        }
     }
 
     loadMore(){
-        const { username } = this.props.route.params
-        // const username = 'wizardforcel'
+        const { search } = this.props.route.params
         const { page, loading, list } = this.state
         if(loading) return
 
         this.setState({ loading: true})
 
-        getFollers(username, {page: page+1}).then(data=>{
+        searchUsers({q: search, page: page+1}).then(data=>{
+            const items = data.items
             this.setState({
                 loading: false,
                 page: page + 1,
-                list : [...list, ...data],
+                list : [...list, ...items],
             })
         }).catch(err=>{
             console.log(err)
         })
     }
+
     renderFooter(){
         if(!this.state.loading) return null;
         return (<ActivityIndicator color='#000' size="large"/>)
@@ -51,15 +55,16 @@ export default class Followers extends Component{
         return(
             <FlatList style={styles.userDetail}
                       data={list}
-                      // colors={["#9Bd35A", "#689F38"]}
-                      // refreshing={this.state.loading}
                       onEndReached={this.loadMore}
                       ListFooterComponent={this.renderFooter}
                       renderItem={({item})=>(
-                          <View style={ styles.userItem } key={item.id}>
-                              <Image source={{uri: item.avatar_url}} style={styles.avatar}/>
-                              <Text>{ item.login }</Text>
-                          </View>
+                          <TouchableOpacity key={item.id}
+                                            onPress={()=>{this.props.navigation.push('trendingUserDetail', {username: item.login})}}>
+                              <View style={styles.userItem}>
+                                  <Image source={{uri: item.avatar_url}} style={styles.avatar}/>
+                                  <Text>{ item.login }</Text>
+                              </View>
+                          </TouchableOpacity>
                       )}/>
         )
     }

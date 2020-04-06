@@ -4,31 +4,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { getUserByName } from '../../api/user'
 import gStyles from '../../commonStyle'
 
-export default class UserDetail extends Component{
+export default class ProfileCmp extends Component{
     constructor(props){
         super(props)
-        this.state = {
-            detail: {},
-            isLoading: true,
-        }
     }
-    componentDidMount(){
-        const { username } = this.props.route.params
-        getUserByName(username).then(data=>{
-            this.setState({
-                isLoading: false,
-                detail : data
-            })
-        })
-    }
-    render(){
-        const { detail } = this.state
-        if(this.state.isLoading){
-            return(
-                <ActivityIndicator size="large" color="#0000ff"/>
-            )
-        }
 
+    render(){
+        const { detail } = this.props
+        console.log('detal', typeof detail, detail)
+        if(!detail){
+            return null
+        }
         return(
             <ScrollView style={styles.userDetail} >
                 <View style={styles.avatarBox}>
@@ -46,14 +32,14 @@ export default class UserDetail extends Component{
                         <View style={styles.socialBorder}/>
 
                         <TouchableOpacity style={styles.alignCenter}
-                                          onPress={()=>{this.props.navigation.navigate('followers', {username: detail.login})}}>
+                                          onPress={()=>{this.props.navigation.push('followers', {username: detail.login})}}>
                             <Text>{detail.followers}</Text>
                             <Text>Followers</Text>
                         </TouchableOpacity>
 
                         <View style={styles.socialBorder}/>
                         <TouchableOpacity style={styles.alignCenter}
-                            onPress={()=>{this.props.navigation.navigate('following', {username: detail.login})}}>
+                                          onPress={()=>{this.props.navigation.push('following', {username: detail.login})}}>
                             <Text>{detail.following}</Text>
                             <Text>Following</Text>
                         </TouchableOpacity>
@@ -95,7 +81,7 @@ export default class UserDetail extends Component{
 
 const styles = StyleSheet.create({
     userDetail: {
-      // padding: 20
+        // padding: 20
     },
     avatarBox: {
         backgroundColor: '#fff',
@@ -111,10 +97,10 @@ const styles = StyleSheet.create({
         padding: 20
     },
     socialDetail: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginTop: 10,
-      marginBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 10,
+        marginBottom: 20,
     },
     socialBorder:{
         borderRightColor: '#333',
@@ -128,12 +114,12 @@ const styles = StyleSheet.create({
         // alignSelf: 'stretch',
     },
     alignCenter:{
-      alignItems: 'center'
+        alignItems: 'center'
     },
     socialBtn: {
-      borderRadius: 6,
-      width: 400,
-      alignSelf: 'stretch',
+        borderRadius: 6,
+        width: 400,
+        alignSelf: 'stretch',
     },
     avatar: {
         width: 60,

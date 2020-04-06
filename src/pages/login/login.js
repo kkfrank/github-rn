@@ -1,99 +1,98 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, TextInput, StyleSheet, CheckBox, Switch } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, View, Image, Button, TextInput, StyleSheet, Switch, AsyncStorage } from 'react-native'
+import CheckBox from '@react-native-community/checkbox';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const TopTab = createMaterialTopTabNavigator();
-// import * as StorageUtil from  "../../utils/StorageUtil";
-import storage from  "../../utils/storage";
+import { AuthContext } from "../../authContext";
 
 import Toast from '../components/Toast'
-
 import { getUser } from "../../api/user";
 
 export default class Login extends Component{
     constructor(props){
         super(props)
-        console.log('fkk navigation',this.props.navigation)
         this.state={
             type: 'normal',
             email: '',
             password: '',
             rememberMe: false,
-            token: '',
-            // token:'',
+            token:'',
             msg: ''
         }
     }
+
     handleChangeFiled(props, value){
         this.setState({
             [props]: value,
         })
     }
-    handleLogin(){
+
+    async handleLogin(setCurrentUser){
         const token = this.state.token
 
         if(!token){
-            this.setState({
-                msg: 'token为空'
-            })
+            this.setState({ msg: 'token为空' })
             return
         }
-        getUser(token).then(data=>{
-            storage.setItem('user', JSON.stringify(data))
-                .then(()=>{
-                    // this.props.navigation.navigate('Details')
-                    this.props.loginSuccess(data)
-                    // this.setState({
-                    // })
-                })
-        }).catch(err=>{
-            console.log('getUser err',err)
+
+        try{
+           const user =  await getUser(token)
+           const userString = JSON.stringify(user)
+
+           if(this.state.rememberMe){
+               await AsyncStorage.setItem('user', userString)
+           }
+           setCurrentUser(user)
+        }catch(err){
             this.setState({
                 msg: err.message
             })
-        })
+        }
     }
+
     render(){
         return(
-            <View style={styles.loginBox}>
-                <Toast msg = {this.state.msg}/>
-                <Image source={require('../../assets/image/github-logo.png')}/>
-                <Text>Login page</Text>
-                <View style={styles.tab}>
-                    <Text style={[styles.tabItem, this.state.type === 'normal' && styles.active]} onPress={()=>{this.handleChangeFiled('type', 'normal')}}>账号密码</Text>
-                    <Text style={[styles.tabItem, this.state.type !== 'normal' && styles.active]} onPress={()=>{this.handleChangeFiled('type', 'token')}}>Token</Text>
-                </View>
+            <AuthContext.Consumer>
                 {
-                    this.state.type === 'normal' && (
-                        <View style={styles.loginContent}>
+                    ({currentUser, setCurrentUser})=>(
+                        <View style={styles.loginBox}>
+                            <Toast msg = {this.state.msg}/>
+                            <Image source={require('../../assets/image/github-logo.png')}/>
+                            <Text>Login page</Text>
+                            <View style={styles.tab}>
+                                <Text style={[styles.tabItem, this.state.type === 'normal' && styles.active]} onPress={()=>{this.handleChangeFiled('type', 'normal')}}>账号密码</Text>
+                                <Text style={[styles.tabItem, this.state.type !== 'normal' && styles.active]} onPress={()=>{this.handleChangeFiled('type', 'token')}}>Token</Text>
+                            </View>
+                            {
+                                this.state.type === 'normal' && (
+                                    <View style={styles.loginContent}>
 
-                        <TextInput placeholder='Please input email'
-                                   style={styles.username}
-                                   onChangeText={(text)=>{this.handleChangeFiled('email', text)}} />
-                        <TextInput  placeholder="Please input password"
-                                    style={styles.password}
-                                    secureTextEntry={true}
-                                    onChangeText={(text)=>{this.handleChangeFiled('password', text)}} />
+                                        <TextInput placeholder='Please input email' style={styles.username}
+                                                   onChangeText={(text)=>{this.handleChangeFiled('email', text)}} />
+                                        <TextInput  placeholder="Please input password" style={styles.password} secureTextEntry={true}
+                                                    onChangeText={(text)=>{this.handleChangeFiled('password', text)}} />
+                                    </View>
+                                )
+                            }
+                            {
+                                this.state.type === 'token' && (
+                                    <View style={styles.loginContent}>
+                                        <TextInput placeholder='Please input token' style={styles.token}
+                                                   onChangeText={(text)=>{this.handleChangeFiled('token', text)}} />
+                                    </View>
+                                )
+                            }
+                            <View style={styles.submitBox}>
+                                <View style={styles.rememberMe}>
+                                    <CheckBox value={this.state.rememberMe} onChange={()=>{this.handleChangeFiled('rememberMe', !this.state.rememberMe)}}/>
+                                    <Text onPress={()=>{this.handleChangeFiled('rememberMe', !this.state.rememberMe)}}>Remember Me</Text>
+                                </View>
+                                <Button title='submit' style={styles.login} onPress={()=>{this.handleLogin(setCurrentUser)}}/>
+                            </View>
                         </View>
                     )
                 }
-                {
-                    this.state.type === 'token' && (
-                        <View style={styles.loginContent}>
-                            <TextInput placeholder='Please input token'
-                                       style={styles.token}
-                                       onChangeText={(text)=>{this.handleChangeFiled('token', text)}} />
-                        </View>
-                    )
-                }
-                <View style={styles.submitBox}>
-                    <View style={styles.rememberMe}>
-                        <CheckBox value={this.state.rememberMe} onChange={()=>{this.handleChangeFiled('rememberMe', !this.state.rememberMe)}}/>
-                        <Text onPress={()=>{this.handleChangeFiled('rememberMe', !this.state.rememberMe)}}>Remember Me</Text>
-                    </View>
-                    <Button title='submit' style={styles.login} onPress={()=>{this.handleLogin()}}/>
-                </View>
-            </View>
+            </AuthContext.Consumer>
         )
     }
 }

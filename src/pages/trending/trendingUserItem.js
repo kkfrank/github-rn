@@ -1,25 +1,27 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/Octicons';
 
 export default class TrendingUserItem extends Component{
+
     render(){
-        const item = this.props.item
+        const user = this.props.user
+
         return(
             <View style={styles.userItem} >
-                <Image source={{uri: item.avatar}} style={styles.userAvatar} />
+                <Image source={{uri: user.avatar}} style={styles.userAvatar} />
                 <View style={styles.detail}>
-                    <Text style={styles.name}>{item.name}</Text>
+                    <Text style={styles.name}>{ user.name }</Text>
                     <View>
-                        <View style={styles.popular}>
+                        <View style={ styles.popular }>
                             <Icon name='flame' color={'#e36209'} size={20} />
-                            <Text style={styles.popularText}>POPULAR REPO</Text>
+                            <Text style={ styles.popularText }>POPULAR REPO</Text>
                         </View>
                         <View style={styles.repoBox}>
                             <Icon name='book' color={'#e36209'} size={20} />
-                            <Text style={styles.repoName}>{item.repo.name}</Text>
+                            <Text style={ styles.repoName }>{ user.repo.name }</Text>
                         </View>
-                        <Text>{item.repo.description}</Text>
+                        <Text>{ user.repo.description }</Text>
                     </View>
                 </View>
             </View>

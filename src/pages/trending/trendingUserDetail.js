@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native'
 import ProfileCmp from '../profile/ProfileCmp'
 import { getUserByName } from '../../api/user'
 
-export default class Profile extends Component{
+export default class TrendingUserDetail extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -13,14 +13,16 @@ export default class Profile extends Component{
     }
 
     componentDidMount(){
-        const { user } = this.props.route.params
-        this.props.navigation.setOptions({ title: user.name })
+        const { username } = this.props.route.params
+        this.props.navigation.setOptions({ title: username })
 
-        getUserByName(user.username).then(data=>{
+        getUserByName(username).then(data=>{
             this.setState({
                 loading: false,
                 detail : data
             })
+        }).catch(err=>{
+            console.log('err', err)
         })
     }
 
@@ -31,6 +33,6 @@ export default class Profile extends Component{
                 <ActivityIndicator size="large" color="#000"/>
             )
         }
-        return <ProfileCmp detail={detail} />
+        return <ProfileCmp detail={detail} navigation={this.props.navigation}/>
     }
 }

@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
-import { Alert, FlatList, Modal,
-    ActivityIndicator, StatusBar, ScrollView, Text, View, Image,TouchableOpacity, StyleSheet } from 'react-native'
+import { ActivityIndicator, Text, View, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getRepo, getReadme } from '../../api/repo'
 import Readme from '../readme/readme'
+
 export default class Repo extends Component{
-    // static navigationOptions = {
-    //     title: 'sdfs',
-    // };
     constructor(props){
         super(props)
         this.state = {
@@ -19,23 +16,22 @@ export default class Repo extends Component{
 
     componentDidMount(){
         const { username, reponame } = this.props.route.params
-        console.log('fkk',username, reponame )
         const getRepoPromise =  getRepo(username, reponame)
         // const getReadmePromise =  getReadme('kezhenxu94','mini-github')
         const getReadmePromise =  getReadme(username, reponame)
 
+        this.props.navigation.setOptions({ title: reponame })
+
         Promise.all([getRepoPromise, getReadmePromise])
             .then(([detail, readme])=>{
-                // var content = Buffer.from(readme.content, 'base64').toString('utf-8');
                 this.setState({
                     loading: false,
                     detail: detail,
                     readme: readme
                 })
-                this.props.navigation.setOptions({ title: detail.name })
             })
     }
-    // headerStyle:{backgroundColor: '#348FED'}
+
     render(){
         if(this.state.loading){
             return(
@@ -109,8 +105,6 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     repoDesc: {
-        // width: '100%',
-        // textAlign: 'left',
         fontSize: 14,
         color: '#fff',
     },

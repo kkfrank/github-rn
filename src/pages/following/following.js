@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, StyleSheet ,ScrollView, ActivityIndicator,
-FlatList } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Text, View, Image, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native'
 import { getFollowing } from '../../api/user'
-import gStyles from '../../commonStyle'
 
 export default class Following extends Component{
     constructor(props){
@@ -38,6 +35,7 @@ export default class Following extends Component{
             console.log(err)
         })
     }
+
     renderFooter(){
         if(!this.state.loading) return null;
         return (<ActivityIndicator color='#000' size="large"/>)
@@ -54,10 +52,13 @@ export default class Following extends Component{
                       onEndReached={this.loadMore}
                       ListFooterComponent={this.renderFooter}
                       renderItem={({item})=>(
-                          <View style={ styles.userItem } key={item.id}>
-                              <Image source={{uri: item.avatar_url}} style={styles.avatar}/>
-                              <Text>{ item.login }</Text>
-                          </View>
+                          <TouchableOpacity key={item.id}
+                                onPress={()=>{this.props.navigation.push('trendingUserDetail', {username: item.login})}}>
+                              <View style={styles.userItem}>
+                                  <Image source={{uri: item.avatar_url}} style={styles.avatar}/>
+                                  <Text>{ item.login }</Text>
+                              </View>
+                          </TouchableOpacity>
                       )}/>
         )
     }

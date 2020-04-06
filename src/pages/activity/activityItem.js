@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Alert, FlatList, Modal, StatusBar, ScrollView, StyleSheet, Text, View, Image,TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image,TouchableOpacity } from 'react-native'
 
 export default class ActivityItem extends Component{
     render(){
         const { item } = this.props
         const repoAuthor = item.repo.name.split('/')[0]
         const repoName = item.repo.name.split('/')[1]
+
         return(
             <TouchableOpacity onPress={()=>{
                 this.props.navigation.navigate('trendingRepoDetail',{username: repoAuthor, reponame: repoName})

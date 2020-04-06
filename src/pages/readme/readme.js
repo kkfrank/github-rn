@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, ScrollView, StyleSheet } from 'react-native'
+import { Text, View, ScrollView, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Markdown  from 'react-native-markdown-renderer';
 import { Buffer } from 'buffer'
@@ -68,11 +68,12 @@ export default class Readme extends Component{
 }
 
 
-
 const styles = StyleSheet.create({
     markdownBox:{
-      padding: 20,
-        marginBottom:340
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingTop: 0,
+      marginBottom: 400
     },
     // readmeBox:{
     //   paddingBottom: 20
@@ -121,13 +122,10 @@ const styles = StyleSheet.create({
       // color:'red'
     },
     link:{
-        // width: '100%',
       color: '#0366d6',
-        // flexWrap: 'nowrap'
     },
     list:{
         width: '100%',
-        // listStyleType: 'none'
     },
     titleBox:{
       flexDirection: 'row',
@@ -139,8 +137,6 @@ const styles = StyleSheet.create({
 
     },
     title:{
-        // backgroundColor: 'red',
-        // textAlign: 'center',
         fontSize: 18,
         marginLeft: 10
     }

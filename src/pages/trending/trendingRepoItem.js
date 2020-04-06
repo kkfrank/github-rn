@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
-import { Text, View, Image, Button, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import gStyles from '../../commonStyle'
 
 export default class RepoItem extends Component{
     render(){
-        console.log(this.props)
         const trend = this.props.item
         return(
             <View style={styles.trendItem} >
-                <Text style = {styles.trendTitle} numberOfLines={1}>{ trend.name} / {trend.author}</Text>
+                {/*<Text style = {styles.trendTitle} numberOfLines={1}>{ trend.name} / {trend.author}</Text>*/}
+                <Text style = {styles.trendTitle} numberOfLines={1}>{ trend.name }</Text>
                 <Text style={styles.trendDesc}>{ trend.description }</Text>
                 <View style={styles.trendOther}>
                     <Text>{ trend.language }</Text>

@@ -9,12 +9,11 @@ export class Request{
                method: 'GET',
                headers: {
                   // 'Authorization': 'Bearer' + token,
-                   // 'Content-type': 'application/json'
+                  //  'Content-type': 'application/json',
                    ...header
                }
            })
            .then(res=> {
-               console.log('fkkdfdf',res)
                if(res.status >= 200 && res.status<300){
                    return resolve(res.json())
                }
@@ -22,7 +21,13 @@ export class Request{
                    reject({
                        message: 'Unauthorized'
                    })
+               }else if(res.status === 403){
+                   // console.log('get', res)
+                   reject({
+                       message: 'Forbidden'
+                   })
                }else{
+                   // console.log('get', res)
                    reject({
                        message: 'call api error'
                    })
